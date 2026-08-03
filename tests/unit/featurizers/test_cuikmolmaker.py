@@ -77,7 +77,7 @@ def bmg_simplemolecule(mols, mol_featurizer, atom_features_extra, bond_features_
             mols, atom_features_extras, bond_features_extras
         )
     ]
-    return BatchMolGraph(mgs)
+    return BatchMolGraph.create(mgs)
 
 
 @pytest.fixture

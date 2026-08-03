@@ -79,7 +79,7 @@ def variance():
 def bmg():
     V = torch.tensor([[99.0, 99.0, 1.0, 2.0], [99.0, 99.0, 3.0, 4.0]])
     E = torch.tensor([[99.0, 99.0, 1.0, 2.0], [99.0, 99.0, 3.0, 4.0]])
-    return MockBatchMolGraph(V=V, E=E)
+    return MockBatchMolGraph.create(V=V, E=E)
 
 
 def test_uneven_shapes():

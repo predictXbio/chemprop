@@ -31,10 +31,11 @@ class BatchMolGraph(NamedTuple):
     batch: Tensor = field(init=False)
     """the index of the parent :class:`MolGraph` in the batched graph"""
 
-    size: int = field(init=False)
+    __size: int = field(init=False)
 
-    def __new__(cls, mgs: Sequence[MolGraph]):
-        size = len(mgs)
+    @classmethod
+    def create(cls, mgs: Sequence[MolGraph]):
+        __size = len(mgs)
 
         Vs = []
         Es = []
@@ -63,7 +64,7 @@ class BatchMolGraph(NamedTuple):
         edge_index = torch.from_numpy(np.hstack(edge_indexes)).long()
         rev_edge_index = torch.from_numpy(np.concatenate(rev_edge_indexes)).long()
         batch = torch.tensor(np.concatenate(batch_indexes)).long()
-        return super().__new__(cls, mgs, V, E, edge_index, rev_edge_index, batch, __size)
+        return cls(mgs=mgs, V=V, E=E, edge_index=edge_index, rev_edge_index=rev_edge_index, batch=batch, __size=__size)
 
     # @property
     # def V(self):
@@ -122,7 +123,7 @@ class BatchMolGraph(NamedTuple):
 
     def __len__(self) -> int:
         """the number of individual :class:`MolGraph`\s in this batch"""
-        return self.size
+        return self.__size
 
     # def to(self, device: str | torch.device):
     #     self.V = self.V.to(device)
@@ -146,7 +147,7 @@ def collate_batch(batch: Iterable[Datum]) -> TrainingBatch:
     mgs, V_ds, x_ds, ys, weights, lt_masks, gt_masks = zip(*batch)
 
     return TrainingBatch(
-        BatchMolGraph(mgs=mgs),
+        BatchMolGraph.create(mgs=mgs),
         None if V_ds[0] is None else torch.from_numpy(np.concatenate(V_ds)).float(),
         None if x_ds[0] is None else torch.from_numpy(np.array(x_ds)).float(),
         None if ys[0] is None else torch.from_numpy(np.array(ys)).float(),
