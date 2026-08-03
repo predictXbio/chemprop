@@ -170,24 +170,25 @@ def collate_cuik_batch(batch: CuikBatchedDatum) -> TrainingBatch:
     )
 
 
-@dataclass(repr=False, eq=False, slots=True)
 class BatchMolAtomBondGraph(BatchMolGraph):
     bond_batch: Tensor = field(init=False)
     """A tensor of indices that show which :class:`MolGraph` each bond belongs to in the batch"""
 
-    def __post_init__(self, mgs: Sequence[MolGraph]):
+    @classmethod
+    def create(cls, mgs: Sequence[MolGraph]):
         # inheriting a dataclass with slots=True requires explicit arguments to super
-        super(BatchMolAtomBondGraph, self).__post_init__(mgs)
+        # super(BatchMolAtomBondGraph, self).__post_init__(mgs)
 
         bond_batch_indexes = []
         for i, mg in enumerate(mgs):
             bond_batch_indexes.append([i] * len(mg.E))
 
-        self.bond_batch = torch.tensor(np.concatenate(bond_batch_indexes)).long()
+        bond_batch = torch.tensor(np.concatenate(bond_batch_indexes)).long()
+        return cls(mgs=mgs, V=V, E=E, edge_index=edge_index, rev_edge_index=rev_edge_index, batch=batch, size=size, bond_batch=bond_batch)
 
-    def to(self, device):
-        super(BatchMolAtomBondGraph, self).to(device)
-        self.bond_batch = self.bond_batch.to(device)
+    # def to(self, device):
+    #     super(BatchMolAtomBondGraph, self).to(device)
+    #     self.bond_batch = self.bond_batch.to(device)
 
 
 class MolAtomBondTrainingBatch(NamedTuple):
@@ -225,7 +226,7 @@ def collate_mol_atom_bond_batch(batch: Iterable[MolAtomBondDatum]) -> MolAtomBon
         ]
 
     return MolAtomBondTrainingBatch(
-        BatchMolAtomBondGraph(mgs),
+        BatchMolAtomBondGraph.create(mgs),
         None if V_ds[0] is None else torch.from_numpy(np.concatenate(V_ds)).float(),
         None if E_ds[0] is None else torch.from_numpy(np.concatenate(E_ds)).float(),
         None if x_ds[0] is None else torch.from_numpy(np.array(x_ds)).float(),
