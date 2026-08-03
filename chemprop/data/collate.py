@@ -10,31 +10,30 @@ from chemprop.data.molgraph import MolGraph
 from chemprop.featurizers.molgraph.molecule import BatchCuikMolGraph
 
 
-@dataclass(repr=False, eq=False, slots=True)
-class BatchMolGraph:
+class BatchMolGraph(dict):
     """A :class:`BatchMolGraph` represents a batch of individual :class:`MolGraph`\s.
 
     It has all the attributes of a ``MolGraph`` with the addition of the ``batch`` attribute. This
     class is intended for use with data loading, so it uses :obj:`~torch.Tensor`\s to store data
     """
 
-    mgs: InitVar[Sequence[MolGraph]]
-    """A list of individual :class:`MolGraph`\s to be batched together"""
-    V: Tensor = field(init=False)
-    """the atom feature matrix"""
-    E: Tensor = field(init=False)
-    """the bond feature matrix"""
-    edge_index: Tensor = field(init=False)
-    """an tensor of shape ``2 x E`` containing the edges of the graph in COO format"""
-    rev_edge_index: Tensor = field(init=False)
-    """A tensor of shape ``E`` that maps from an edge index to the index of the source of the
-    reverse edge in the ``edge_index`` attribute."""
-    batch: Tensor = field(init=False)
-    """the index of the parent :class:`MolGraph` in the batched graph"""
+    # mgs: InitVar[Sequence[MolGraph]]
+    # """A list of individual :class:`MolGraph`\s to be batched together"""
+    # V: Tensor = field(init=False)
+    # """the atom feature matrix"""
+    # E: Tensor = field(init=False)
+    # """the bond feature matrix"""
+    # edge_index: Tensor = field(init=False)
+    # """an tensor of shape ``2 x E`` containing the edges of the graph in COO format"""
+    # rev_edge_index: Tensor = field(init=False)
+    # """A tensor of shape ``E`` that maps from an edge index to the index of the source of the
+    # reverse edge in the ``edge_index`` attribute."""
+    # batch: Tensor = field(init=False)
+    # """the index of the parent :class:`MolGraph` in the batched graph"""
 
     __size: int = field(init=False)
 
-    def __post_init__(self, mgs: Sequence[MolGraph]):
+    def __init__(self, mgs: Sequence[MolGraph]):
         self.__size = len(mgs)
 
         Vs = []
@@ -55,22 +54,77 @@ class BatchMolGraph:
             num_nodes += mg.V.shape[0]
             num_edges += mg.edge_index.shape[1]
 
-        self.V = torch.from_numpy(np.concatenate(Vs)).float()
-        self.E = torch.from_numpy(np.concatenate(Es)).float()
-        self.edge_index = torch.from_numpy(np.hstack(edge_indexes)).long()
-        self.rev_edge_index = torch.from_numpy(np.concatenate(rev_edge_indexes)).long()
-        self.batch = torch.tensor(np.concatenate(batch_indexes)).long()
+        self["V"] = torch.from_numpy(np.concatenate(Vs)).float()
+        self["E"] = torch.from_numpy(np.concatenate(Es)).float()
+        self["edge_index"] = torch.from_numpy(np.hstack(edge_indexes)).long()
+        self["rev_edge_index"] = torch.from_numpy(np.concatenate(rev_edge_indexes)).long()
+        self["batch"] = torch.tensor(np.concatenate(batch_indexes)).long()
+
+    @property
+    def V(self):
+        # Using self.get() prevents a KeyError if the key doesn't exist yet
+        return self.get("V", None)
+
+    @V.setter
+    def V(self, value):
+        if not isinstance(value, Tensor):
+            raise TypeError("V must be a Tensor")
+        self["V"] = value
+
+    @property
+    def E(self):
+        # Using self.get() prevents a KeyError if the key doesn't exist yet
+        return self.get("E", None)
+
+    @E.setter
+    def E(self, value):
+        if not isinstance(value, Tensor):
+            raise TypeError("E must be a Tensor")
+        self["E"] = value
+
+    @property
+    def edge_index(self):
+        # Using self.get() prevents a KeyError if the key doesn't exist yet
+        return self.get("edge_index", None)
+
+    @edge_index.setter
+    def edge_index(self, value):
+        if not isinstance(value, Tensor):
+            raise TypeError("edge_index must be a Tensor")
+        self["edge_index"] = value
+
+    @property
+    def rev_edge_index(self):
+        # Using self.get() prevents a KeyError if the key doesn't exist yet
+        return self.get("rev_edge_index", None)
+
+    @rev_edge_index.setter
+    def rev_edge_index(self, value):
+        if not isinstance(value, Tensor):
+            raise TypeError("rev_edge_index must be a Tensor")
+        self["rev_edge_index"] = value
+
+    @property
+    def batch(self):
+        # Using self.get() prevents a KeyError if the key doesn't exist yet
+        return self.get("batch", None)
+
+    @batch.setter
+    def batch(self, value):
+        if not isinstance(value, Tensor):
+            raise TypeError("batch must be a Tensor")
+        self["batch"] = value
 
     def __len__(self) -> int:
         """the number of individual :class:`MolGraph`\s in this batch"""
         return self.__size
 
     def to(self, device: str | torch.device):
-        self.V = self.V.to(device)
-        self.E = self.E.to(device)
-        self.edge_index = self.edge_index.to(device)
-        self.rev_edge_index = self.rev_edge_index.to(device)
-        self.batch = self.batch.to(device)
+        self["V"] = self["V"].to(device)
+        self["E"] = self["E"].to(device)
+        self["edge_index"] = self["edge_index"].to(device)
+        self["rev_edge_index"] = self["rev_edge_index"].to(device)
+        self["batch"] = self["batch"].to(device)
 
 
 class TrainingBatch(NamedTuple):
