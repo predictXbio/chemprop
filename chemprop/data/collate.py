@@ -45,11 +45,7 @@ class BatchMolGraph(NamedTuple):
 
         num_nodes = 0
         num_edges = 0
-        print(mgs)
         for i, mg in enumerate(mgs):
-            print(type(mg))
-            print(mg)
-            print(mg.V)
             Vs.append(mg.V)
             Es.append(mg.E)
             edge_indexes.append(mg.edge_index + num_nodes)
