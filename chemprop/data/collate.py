@@ -45,7 +45,7 @@ class BatchMolGraph(dict):
         num_nodes = 0
         num_edges = 0
         for i, mg in enumerate(mgs):
-            print(mg)
+            print(mg.V)
             Vs.append(mg.V)
             Es.append(mg.E)
             edge_indexes.append(mg.edge_index + num_nodes)
