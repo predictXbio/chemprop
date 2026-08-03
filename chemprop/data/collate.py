@@ -31,7 +31,7 @@ class BatchMolGraph(NamedTuple):
     batch: Tensor = field(init=False)
     """the index of the parent :class:`MolGraph` in the batched graph"""
 
-    __size: int
+    __size: int = field(init=False)
 
     def __new__(cls, mgs: Sequence[MolGraph]):
         __size = len(mgs)
