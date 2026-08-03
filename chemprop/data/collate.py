@@ -31,11 +31,11 @@ class BatchMolGraph(NamedTuple):
     batch: Tensor = field(init=False)
     """the index of the parent :class:`MolGraph` in the batched graph"""
 
-    __size: int = field(init=False)
+    size: int = field(init=False)
 
     @classmethod
     def create(cls, mgs: Sequence[MolGraph]):
-        __size = len(mgs)
+        size = len(mgs)
 
         Vs = []
         Es = []
@@ -64,7 +64,7 @@ class BatchMolGraph(NamedTuple):
         edge_index = torch.from_numpy(np.hstack(edge_indexes)).long()
         rev_edge_index = torch.from_numpy(np.concatenate(rev_edge_indexes)).long()
         batch = torch.tensor(np.concatenate(batch_indexes)).long()
-        return cls(mgs=mgs, V=V, E=E, edge_index=edge_index, rev_edge_index=rev_edge_index, batch=batch, __size=__size)
+        return cls(mgs=mgs, V=V, E=E, edge_index=edge_index, rev_edge_index=rev_edge_index, batch=batch, size=size)
 
     # @property
     # def V(self):
@@ -123,7 +123,7 @@ class BatchMolGraph(NamedTuple):
 
     def __len__(self) -> int:
         """the number of individual :class:`MolGraph`\s in this batch"""
-        return self.__size
+        return self.size
 
     # def to(self, device: str | torch.device):
     #     self.V = self.V.to(device)
