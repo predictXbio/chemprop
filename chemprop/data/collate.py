@@ -31,7 +31,7 @@ class BatchMolGraph(dict):
     # batch: Tensor = field(init=False)
     # """the index of the parent :class:`MolGraph` in the batched graph"""
 
-    __size: int = field(init=False)
+    # __size: int = field(init=False)
 
     def __init__(self, mgs: Sequence[MolGraph]):
         self.__size = len(mgs)
@@ -44,8 +44,10 @@ class BatchMolGraph(dict):
 
         num_nodes = 0
         num_edges = 0
+        print(mgs)
         for i, mg in enumerate(mgs):
             print(type(mg))
+            print(mg)
             print(mg.V)
             Vs.append(mg.V)
             Es.append(mg.E)
