@@ -32,7 +32,7 @@ padelpy==0.1.16
 pandas==2.2.3
 pandas-flavor==0.6.0
 pillow==11.1.0
-pip==25.0
+pip==26.2
 propcache==0.3.0
 psutil==7.0.0
 Pygments==2.19.1
