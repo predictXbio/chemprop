@@ -27,7 +27,7 @@ idna==3.10
 Jinja2==3.1.6
 joblib==1.5.1
 kiwisolver==1.4.8
-lightning==2.5.2
+lightning==2.6.5
 lightning-utilities==0.15.0
 markdown-it-py==3.0.0
 MarkupSafe==3.0.2
