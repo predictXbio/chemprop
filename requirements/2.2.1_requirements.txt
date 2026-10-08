@@ -84,7 +84,7 @@ tqdm==4.67.1
 typing_extensions==4.14.1
 tzdata==2025.2
 unicodedata2==16.0.0
-urllib3==2.5.0
+urllib3==2.8.0
 wheel==0.45.1
 xarray==2025.7.1
 zstandard==0.23.0
