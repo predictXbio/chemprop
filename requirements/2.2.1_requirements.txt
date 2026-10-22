@@ -48,7 +48,7 @@ padelpy==0.1.16
 pandas==2.3.1
 pandas_flavor==0.7.0
 patsy==1.0.1
-pillow==11.3.0
+pillow==13.0.0
 pip==25.2
 plotly==6.2.0
 psutil==7.0.0
