@@ -8,7 +8,7 @@ chemprop==2.1.2
 ConfigArgParse==1.7
 descriptastorus==2.8.0
 dill==0.3.9
-filelock==3.13.1
+filelock==4.2.1
 frozenlist==1.5.0
 fsspec==2025.2.0
 gmpy2==2.2.1
